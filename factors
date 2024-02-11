@@ -1,11 +1,17 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
-FILE=$1
+if [ $# -ne 1 ]; then
+	echo "Usage: $0 <file>"
+	exit 1
+fi
+
+FILE="$1"
 
 while read -r NUMBER; do
-	factors=($(factor "$NUMBER"))
-	p=${factors[-2]}
-	q=${factors[-1]}
-	echo "$NUMBER=$p*$q"
+	factors=$(factor "$NUMBER" | sed 's/^[0-9]*://')
 
+	p=$(echo "$factors" | awk '{print $1}')
+	q=$(echo "$factors" | awk '{print $2}')
+
+	echo "$NUMBER=$p*$q"
 done < "$FILE"
